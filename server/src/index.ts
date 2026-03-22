@@ -21,6 +21,6 @@ app.use(
   })
 );
 
-app.listen(env.port, "0.0.0.0", () => {
+app.listen(Number(env.port), "0.0.0.0", () => {
   console.log(`Server is running on http://localhost:${env.port}`);
 });

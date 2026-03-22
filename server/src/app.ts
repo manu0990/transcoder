@@ -1,6 +1,6 @@
 import express from "express";
-import { env } from "./configs/envs";
-import { s3Router } from "./routes/s3.routes";
+import { env } from "@/configs/envs";
+import { s3Router } from "@/routes/s3.routes";
 
 const app = express();
 

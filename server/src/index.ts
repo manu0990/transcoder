@@ -1,7 +1,7 @@
-import { app } from "./app";
+import { app } from "@/app";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "./swagger";
-import { env } from "./configs/envs";
+import { swaggerSpec } from "@/swagger";
+import { env } from "@/configs/envs";
 
 app.use(
   "/api-docs",

@@ -1,5 +1,5 @@
+import { getDownloadUrl, getUploadUrl } from "@/services/s3.service";
 import { Request, Response } from "express";
-import { getUploadUrl, getDownloadUrl } from "../services/s3.service";
 import { v4 as uuidV4 } from "uuid";
 
 export const generateUploadUrl = async (req: Request, res: Response) => {

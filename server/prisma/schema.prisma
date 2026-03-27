@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Video {
+  id          String   @id @default(uuid())
+  s3Key       String
+  fileSize    Int?
+  duration    Float?   // seconds
+
+  status      VideoStatus @default(PENDING)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  jobs        Job[]
+  outputs     VideoOutput[]
+}
+
+model Job {
+  id          String   @id @default(uuid())
+  videoId     String
+  video       Video    @relation(fields: [videoId], references: [id])
+
+  status      JobStatus @default(PENDING)
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(3)
+
+  error       String?   // last error message
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  outputs     VideoOutput[]
+}
+
+model VideoOutput {
+  id          String   @id @default(uuid())
+  videoId     String
+  video       Video    @relation(fields: [videoId], references: [id])
+
+  jobId       String?
+  job         Job?     @relation(fields: [jobId], references: [id])
+
+  resolution  String   // "1920x1080"
+  format      String   // "mp4", "webm"
+  codec       String?  // "h264", "vp9"
+
+  bitrate     Int?     // kbps
+  fps         Int?
+
+  s3Key       String
+  fileSize    Int?
+
+  createdAt   DateTime @default(now())
+}
+
+enum VideoStatus {
+  PENDING     // Video uploaded, waiting for processing
+  PROCESSING  // At least one job is currently running
+  COMPLETED   // All jobs finished successfully
+  FAILED      // One or more jobs failed irrecoverably
+}
+
+enum JobStatus {
+  PENDING     // Job created but not yet queued
+  QUEUED      // Waiting in processing queue
+  PROCESSING  // Currently being processed by a worker
+  RETRYING    // Failed but will retry
+  COMPLETED   // Successfully finished
+  FAILED      // Failed after max retries
+}
